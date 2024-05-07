@@ -2,6 +2,7 @@ package projects.resourcing.job;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,33 +29,48 @@ public class JobController {
 	private JobService jobService;
 	
 	@PostMapping
-	public ResponseEntity<Job> createUser(@Valid @RequestBody CreateJobDTO data) {
+	public ResponseEntity<Job> createUser(@Valid @RequestBody CreateJobDTO data) throws ServiceValidationException {
 	Job createdJob = this.jobService.createJob(data);
 	return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
 	}
 	
-	@GetMapping
-	public ResponseEntity<List<Job>> getAllJobs() {
-		List<Job> allJobs = this.jobService.getAll();
-		return new ResponseEntity<>(allJobs, HttpStatus.OK);
+	
+	private ResponseEntity<List<Job>> getAssignedJobs() {
+	    List<Job> allJobs = this.jobService.getAll();
+	    List<Job> assignedJobs = allJobs.stream()
+	                                    .filter(job -> job.getTemp() != null)
+	                                    .collect(Collectors.toList());
+	    
+	    return new ResponseEntity<>(assignedJobs, HttpStatus.OK);
 	}
+	
+	private ResponseEntity<List<Job>> getNotAssignedJobs() {
+	    List<Job> allJobs = this.jobService.getAll();
+	    List<Job> notAssignedJobs = allJobs.stream()
+	                                    .filter(job -> job.getTemp() == null)
+	                                    .collect(Collectors.toList());
+	    
+	    return new ResponseEntity<>(notAssignedJobs, HttpStatus.OK);
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<Job>> handleRequest(@RequestParam(value = "assigned", required = false) Boolean assigned) {
+	    if (assigned != null && assigned) {
+	        return getAssignedJobs();
+	    } else if (assigned != null && !assigned) {
+	        return getNotAssignedJobs();
+	    } else {
+	        List<Job> allJobs = this.jobService.getAll();
+	        return new ResponseEntity<>(allJobs, HttpStatus.OK);
+	    }
+	}
+	
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Job> getJobById(@PathVariable Long id) throws NotFoundException {
 		Optional<Job> maybeJob = this.jobService.findById(id);
 		Job foundJob = maybeJob.orElseThrow(() -> new NotFoundException(Job.class, id));
 		return new ResponseEntity<>(foundJob, HttpStatus.OK);
-	}
-	
-	@GetMapping("/")
-	public String handleRequest(@RequestParam("assigned") boolean assigned) {
-		if (assigned = true) {
-			return null;
-		}
-		if (assigned = false) {
-			return null;
-		}
-		else return null;
 	}
 	
 	@PatchMapping("/{id}")

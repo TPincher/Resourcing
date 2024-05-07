@@ -23,12 +23,25 @@ public class JobService {
 	@Autowired
 	private TempService tempService;
 
-	public Job createJob(@Valid CreateJobDTO data) {
+	public Job createJob(@Valid CreateJobDTO data) throws ServiceValidationException {
 		Job newJob = new Job();
+			ValidationErrors errors = new ValidationErrors();
 			newJob.setName(data.getName());
 			newJob.setStartDate(data.getStartDate());
 			newJob.setEndDate(data.getEndDate());
-			newJob.setTemp(data.getAssignedTemp());
+			
+			Optional<Temp> maybeTemp = this.tempService.findById(data.getAssignedTemp());
+			if (data.getAssignedTemp() == -1) {
+			    newJob.setTemp(null);
+			   } else if(maybeTemp.isEmpty() ) {
+					errors.addError("Temp", String.format("Temp with id %s does not exist", data.getAssignedTemp()));
+			   } else {
+				newJob.setTemp(maybeTemp.get());
+			}
+			
+		if (errors.hasErrors()) {
+			throw new ServiceValidationException(errors);
+		}
 			
 		return this.repo.save(newJob);
 	}
@@ -64,7 +77,10 @@ public class JobService {
 			}
 
 			Optional<Temp> maybeTemp = this.tempService.findById(tempId);
-			if(maybeTemp.isEmpty() ) {
+			if (tempId == -1) {
+			    foundJob.setTemp(null);
+			}
+			else if(maybeTemp.isEmpty() ) {
 				errors.addError("Temp", String.format("Temp with id %s does not exist", tempId));
 			} else {
 				foundJob.setTemp(maybeTemp.get());

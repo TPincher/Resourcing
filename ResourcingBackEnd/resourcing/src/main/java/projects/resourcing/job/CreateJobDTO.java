@@ -3,7 +3,6 @@ package projects.resourcing.job;
 import java.util.Date;
 
 import jakarta.validation.constraints.NotBlank;
-import projects.resourcing.temp.Temp;
 
 public class CreateJobDTO {
 	
@@ -14,7 +13,7 @@ public class CreateJobDTO {
 	
 	private Date endDate;
 	
-	private Temp assignedTemp;
+	private Long assignedTemp;
 
 	public String getName() {
 		return name;
@@ -40,11 +39,11 @@ public class CreateJobDTO {
 		this.endDate = endDate;
 	}
 
-	public Temp getAssignedTemp() {
+	public Long getAssignedTemp() {
 		return assignedTemp;
 	}
 
-	public void setAssignedTemp(Temp assignedTemp) {
+	public void setAssignedTemp(Long assignedTemp) {
 		this.assignedTemp = assignedTemp;
 	}
 	

@@ -2,6 +2,8 @@ package projects.resourcing.job;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +41,7 @@ public class Job {
 	private Date endDate;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("jobs")
 	@JoinColumn(name = "temp_id")
 	private Temp temp;
 
@@ -75,8 +78,8 @@ public class Job {
 		this.endDate = endDate;
 	}
 
-	public Long getTemp() {
-		return temp != null ? temp.getId() : null;
+	public Temp getTemp() {
+		return temp != null ? temp : null;
 	}
 
 	public void setTemp(Temp temp) {

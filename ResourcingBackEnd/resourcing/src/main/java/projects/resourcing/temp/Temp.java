@@ -33,7 +33,7 @@ public class Temp {
 	private String lastName;
 	
 	@OneToMany(mappedBy = "temp")
-	@JsonIgnoreProperties("tempId")
+	@JsonIgnoreProperties("temp")
 	private List<Job> jobs;
 
 	public Long getId() {
