@@ -12,8 +12,6 @@ public class CreateJobDTO {
 	private Date startDate;
 	
 	private Date endDate;
-	
-	private Long assignedTemp;
 
 	public String getName() {
 		return name;
@@ -38,14 +36,5 @@ public class CreateJobDTO {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-
-	public Long getAssignedTemp() {
-		return assignedTemp;
-	}
-
-	public void setAssignedTemp(Long assignedTemp) {
-		this.assignedTemp = assignedTemp;
-	}
-	
 	
 }

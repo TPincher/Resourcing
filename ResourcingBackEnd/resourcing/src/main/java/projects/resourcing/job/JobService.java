@@ -1,5 +1,6 @@
 package projects.resourcing.job;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -25,24 +26,10 @@ public class JobService {
 
 	public Job createJob(@Valid CreateJobDTO data) throws ServiceValidationException {
 		Job newJob = new Job();
-			ValidationErrors errors = new ValidationErrors();
 			newJob.setName(data.getName());
 			newJob.setStartDate(data.getStartDate());
 			newJob.setEndDate(data.getEndDate());
-			
-			Optional<Temp> maybeTemp = this.tempService.findById(data.getAssignedTemp());
-			if (data.getAssignedTemp() == -1) {
-			    newJob.setTemp(null);
-			   } else if(maybeTemp.isEmpty() ) {
-					errors.addError("Temp", String.format("Temp with id %s does not exist", data.getAssignedTemp()));
-			   } else {
-				newJob.setTemp(maybeTemp.get());
-			}
-			
-		if (errors.hasErrors()) {
-			throw new ServiceValidationException(errors);
-		}
-			
+
 		return this.repo.save(newJob);
 	}
 
@@ -67,11 +54,9 @@ public class JobService {
 			if(data.getName() != null) {
 				foundJob.setName(data.getName());
 			}
-
 			if(data.getStartDate() != null) {
 				foundJob.setStartDate(data.getStartDate());
 			}
-
 			if(data.getEndDate() != null) {
 				foundJob.setEndDate(data.getEndDate());
 			}

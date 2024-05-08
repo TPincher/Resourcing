@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import projects.resourcing.exceptions.NotFoundException;
+import projects.resourcing.helperFuncs.ConflictChecker;
+import projects.resourcing.job.Job;
+import projects.resourcing.job.JobService;
 
 @RestController
 @RequestMapping("/temps")
@@ -23,6 +27,9 @@ public class TempController {
 	@Autowired
 	private TempService tempService;
 	
+	@Autowired
+	private JobService jobService;
+	
 	@PostMapping
 	public ResponseEntity<Temp> createUser(@Valid @RequestBody CreateTempDTO data) {
 		Temp createdTemp = this.tempService.createTemp(data);
@@ -30,9 +37,19 @@ public class TempController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Temp>> getAllTemps() {
-		List<Temp> allTemps = this.tempService.getAll();
-		return new ResponseEntity<>(allTemps, HttpStatus.OK);
+	public ResponseEntity<List<Temp>> getAllTemps(@RequestParam(value = "jobId", required = false) Long jobId) {
+	    if (jobId != null && jobId > 0) {
+	        List<Temp> allTemps = this.tempService.getAll();
+	        Job foundJob = jobService.findById(jobId).orElse(null);
+	        if (foundJob != null) {
+	            return ConflictChecker.checkDates(foundJob, allTemps);
+	        } else {
+	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        }
+	    } else {
+	        List<Temp> allTemps = this.tempService.getAll();
+	        return new ResponseEntity<>(allTemps, HttpStatus.OK);
+	    }
 	}
 	
 	@GetMapping("/{id}")
@@ -41,4 +58,5 @@ public class TempController {
 		Temp foundTemp = maybeTemp.orElseThrow(() -> new NotFoundException(Temp.class, id));
 		return new ResponseEntity<>(foundTemp, HttpStatus.OK);
 	}
+	
 }
