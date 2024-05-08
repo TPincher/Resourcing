@@ -2,6 +2,7 @@ package projects.resourcing.job;
 
 import java.util.Date;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 
 public class CreateJobDTO {

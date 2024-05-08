@@ -76,6 +76,11 @@ Change logs
 - Jobs can also be created with no assigned temp by passing a value of -1. This should be the default on the front-end.
 - Adjusted classes to have 'job' object return for 'temp' and vice versa.
 
+8/5/2024
+
+- Finished up the last of the backend, so that a user can check which temps are available for a given job. This works through a custom SQL query in the repository, which was a first for me. Hit trouble with returning a full array of nulls, but managed my way around it using coalesce to ensure the subquery is never just an array of null values. It now works. It took hours.
+- Reworked the job filter to remove logic from the controller layer and implement it in the service layer.
+
 What did you struggle with?
 
     What? Why? How?

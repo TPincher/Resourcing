@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import projects.resourcing.exceptions.NotFoundException;
-import projects.resourcing.helperFuncs.ConflictChecker;
-import projects.resourcing.job.Job;
-import projects.resourcing.job.JobService;
 
 @RestController
 @RequestMapping("/temps")
@@ -26,9 +23,6 @@ public class TempController {
 
 	@Autowired
 	private TempService tempService;
-	
-	@Autowired
-	private JobService jobService;
 	
 	@PostMapping
 	public ResponseEntity<Temp> createUser(@Valid @RequestBody CreateTempDTO data) {
@@ -39,13 +33,8 @@ public class TempController {
 	@GetMapping
 	public ResponseEntity<List<Temp>> getAllTemps(@RequestParam(value = "jobId", required = false) Long jobId) {
 	    if (jobId != null && jobId > 0) {
-	        List<Temp> allTemps = this.tempService.getAll();
-	        Job foundJob = jobService.findById(jobId).orElse(null);
-	        if (foundJob != null) {
-	            return ConflictChecker.checkDates(foundJob, allTemps);
-	        } else {
-	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	        }
+	        List<Temp> freeTemps = this.tempService.getFreeTemps(jobId);
+	        return new ResponseEntity<>(freeTemps, HttpStatus.OK);
 	    } else {
 	        List<Temp> allTemps = this.tempService.getAll();
 	        return new ResponseEntity<>(allTemps, HttpStatus.OK);
