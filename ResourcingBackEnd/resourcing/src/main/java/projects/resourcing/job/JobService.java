@@ -1,6 +1,8 @@
 package projects.resourcing.job;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,15 +28,46 @@ public class JobService {
 
 	public Job createJob(@Valid CreateJobDTO data) throws ServiceValidationException {
 		Job newJob = new Job();
+		ValidationErrors errors = new ValidationErrors();
+		
 			newJob.setName(data.getName());
 			newJob.setStartDate(data.getStartDate());
-			newJob.setEndDate(data.getEndDate());
-
+			if (data.getEndDate().before(data.getStartDate())) {	
+				errors.addError("Date Format", String.format("End date must be the same as, or later than, the start date"));
+			} else {
+				newJob.setEndDate(data.getEndDate());
+			}
+			if (errors.hasErrors()) {
+				throw new ServiceValidationException(errors);
+			}
 		return this.repo.save(newJob);
 	}
 
 	public List<Job> getAll() {
 		return this.repo.findAll();
+	}
+
+	public List<Job> getFilteredJobs(Boolean assigned) {
+			
+        List<Job> filteredList = new ArrayList<>();
+		
+        if (Boolean.TRUE.equals(assigned)) {
+			List<Long> filterIds = repo.filterNotNullJobs();
+			for (Long filterId : filterIds) {
+				Optional<Job> jobOptional = repo.findById(filterId);
+				jobOptional.ifPresent(filteredList::add);
+			}
+			return filteredList;
+		} else if (Boolean.FALSE.equals(assigned)) {
+			List<Long> filterIds = repo.filterNullJobs();
+			for (Long filterId : filterIds) {
+				Optional<Job> jobOptional = repo.findById(filterId);
+				jobOptional.ifPresent(filteredList::add);
+			}
+			return filteredList;
+		} else {
+	    	return Collections.emptyList();
+		}
 	}
 
 	public Optional<Job> findById(Long id) {
@@ -58,7 +91,12 @@ public class JobService {
 				foundJob.setStartDate(data.getStartDate());
 			}
 			if(data.getEndDate() != null) {
-				foundJob.setEndDate(data.getEndDate());
+				
+				if (data.getEndDate().before(data.getStartDate())) {	
+					errors.addError("Date Format", String.format("End date must be the same as, or later than, the start date"));
+				} else {
+					foundJob.setEndDate(data.getEndDate());
+				}
 			}
 
 			Optional<Temp> maybeTemp = this.tempService.findById(tempId);
@@ -87,5 +125,4 @@ public class JobService {
 		this.repo.delete(maybeJob.get());
 		return true;
 	}
-
 }

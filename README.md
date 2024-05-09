@@ -81,6 +81,14 @@ Change logs
 - Finished up the last of the backend, so that a user can check which temps are available for a given job. This works through a custom SQL query in the repository, which was a first for me. Hit trouble with returning a full array of nulls, but managed my way around it using coalesce to ensure the subquery is never just an array of null values. It now works. It took hours.
 - Reworked the job filter to remove logic from the controller layer and implement it in the service layer.
 
+9/5/2024
+
+- Fixed the SQL query in the job repository - added a second query instead of adding a variable for code readability.
+- Removed logic from job controller, transferred it to the job service instead.
+- Added in date validation to ensure that endDate is always at the same time or after the startDate for both creation and updating jobs. Decided to do this in the service layer.
+- Fixed null check issue in job filter
+- Started work on the front end. Will use Material UI as it seems like a popular library, performs well in terms of accessibility and covers my biggest weakness - design.
+
 What did you struggle with?
 
     What? Why? How?

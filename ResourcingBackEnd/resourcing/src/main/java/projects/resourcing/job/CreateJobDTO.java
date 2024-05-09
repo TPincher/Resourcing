@@ -10,8 +10,10 @@ public class CreateJobDTO {
 	@NotBlank
 	private String name;
 	
+	@FutureOrPresent
 	private Date startDate;
 	
+	@FutureOrPresent
 	private Date endDate;
 
 	public String getName() {

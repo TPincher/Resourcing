@@ -2,7 +2,6 @@ package projects.resourcing.job;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,36 +32,16 @@ public class JobController {
 	Job createdJob = this.jobService.createJob(data);
 	return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
 	}
-	
-	
-	private ResponseEntity<List<Job>> getAssignedJobs() {
-	    List<Job> allJobs = this.jobService.getAll();
-	    List<Job> assignedJobs = allJobs.stream()
-	                                    .filter(job -> job.getTemp() != null)
-	                                    .collect(Collectors.toList());
-	    
-	    return new ResponseEntity<>(assignedJobs, HttpStatus.OK);
-	}
-	
-	private ResponseEntity<List<Job>> getNotAssignedJobs() {
-	    List<Job> allJobs = this.jobService.getAll();
-	    List<Job> notAssignedJobs = allJobs.stream()
-	                                    .filter(job -> job.getTemp() == null)
-	                                    .collect(Collectors.toList());
-	    
-	    return new ResponseEntity<>(notAssignedJobs, HttpStatus.OK);
-	}
-	
+
 	@GetMapping
 	public ResponseEntity<List<Job>> handleRequest(@RequestParam(value = "assigned", required = false) Boolean assigned) {
-	    if (assigned != null && assigned) {
-	        return getAssignedJobs();
-	    } else if (assigned != null && !assigned) {
-	        return getNotAssignedJobs();
+	    List<Job> filteredJobs;
+	    if (assigned != null) {
+	        filteredJobs = this.jobService.getFilteredJobs(assigned);
 	    } else {
-	        List<Job> allJobs = this.jobService.getAll();
-	        return new ResponseEntity<>(allJobs, HttpStatus.OK);
+	        filteredJobs = this.jobService.getAll();
 	    }
+	    return new ResponseEntity<>(filteredJobs, HttpStatus.OK);
 	}
 	
 	

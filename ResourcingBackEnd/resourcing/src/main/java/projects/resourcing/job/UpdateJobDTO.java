@@ -2,12 +2,16 @@ package projects.resourcing.job;
 
 import java.util.Date;
 
+import jakarta.validation.constraints.FutureOrPresent;
+
 public class UpdateJobDTO {
 	
 	private String name;
 	
+	@FutureOrPresent
 	private Date startDate;
 	
+	@FutureOrPresent
 	private Date endDate;
 	
 	private Long assignedTemp;
