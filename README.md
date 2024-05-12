@@ -87,7 +87,7 @@ Change logs
 - Removed logic from job controller, transferred it to the job service instead.
 - Added in date validation to ensure that endDate is always at the same time or after the startDate for both creation and updating jobs. Decided to do this in the service layer.
 - Fixed null check issue in job filter
-- Started work on the front end. Will use Material UI as it seems like a popular library, performs well in terms of accessibility and covers my biggest weakness - design.
+- Started work on the front end, as it will be hard to test auth functions without it. Will use Material UI as it seems like a popular library, performs well in terms of accessibility and covers my biggest weakness - design.
 
 What did you struggle with?
 
