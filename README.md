@@ -87,7 +87,16 @@ Change logs
 - Removed logic from job controller, transferred it to the job service instead.
 - Added in date validation to ensure that endDate is always at the same time or after the startDate for both creation and updating jobs. Decided to do this in the service layer.
 - Fixed null check issue in job filter
-- Started work on the front end. Will use Material UI as it seems like a popular library, performs well in terms of accessibility and covers my biggest weakness - design.
+- Started work on the front end, as it will be hard to test auth functions without it. Will use Material UI as it seems like a popular library, performs well in terms of accessibility and covers my biggest weakness - design.
+
+14/5/2024
+
+- Over the last few days I've gotten most of the way through restructuring the database to accomodate for user authentication.
+- New table for username, passwords (encrypted using BCrypt), TempId
+- Create websecurity files in backend, have it mostly working.
+- Still want to learn more about how tokens work under the hood. How do they know which user they represent? Permissions for that user? Time to live?
+- Currently using generic Spring Security login page. How do I run this from my own frontend?
+- More work to be done on building methods from exposed endpoints once the authentication work is done. There will be more custom SQL to be written, I'm sure.
 
 What did you struggle with?
 
